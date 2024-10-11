@@ -30,6 +30,7 @@ final class ProductListViewModel: ObservableObject {
             repository.fetchProducts { [weak self] result in
                 switch result {
                 case .success(let products):
+                    self?.products.removeAll()
                     self?.products = products
                     self?.repository.saveProducts(products)
                     print("Productos cargados desde API")
@@ -41,6 +42,7 @@ final class ProductListViewModel: ObservableObject {
                 self?.isLoading = false
             }
         } else {
+            self.products.removeAll()
             self.products = localProducts
             print("Productos cargados desde Core Data")
             self.onProductsFetched?()

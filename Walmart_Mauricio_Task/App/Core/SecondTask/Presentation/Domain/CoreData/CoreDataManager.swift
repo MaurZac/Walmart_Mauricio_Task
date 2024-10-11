@@ -17,7 +17,7 @@ final class CoreDataManager {
         let container = NSPersistentContainer(name: "ProductList")
         container.loadPersistentStores { description, error in
             if let error = error as NSError? {
-                fatalError("Failed to load Core Data stack: \(error), \(error.userInfo)")
+                fatalError("Error al cargar core data: \(error), \(error.userInfo)")
             }
         }
         return container
@@ -34,7 +34,7 @@ final class CoreDataManager {
                 try context.save()
             } catch {
                 let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                fatalError("Error al guardar core data: \(nserror), \(nserror.userInfo)")
             }
         }
     }

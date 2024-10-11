@@ -50,19 +50,30 @@ final class ProductRepositoryImpl: ProductRepository {
     func saveProducts(_ products: [Product]) {
         let context = CoreDataManager.shared.context
         
-        context.performAndWait {
-            for product in products {
-                let productEntity = ProductEntity(context: context)
-                productEntity.id = product.id
-                productEntity.name = product.name
-                productEntity.price = product.price
-                productEntity.stock = Int16(product.stock)
-                productEntity.imageUrl = product.imageUrl
-                productEntity.location = product.location
-            }
+        for product in products {
+            let fetchRequest: NSFetchRequest<ProductEntity> = ProductEntity.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "id == %@", product.id)
             
-            CoreDataManager.shared.saveContext()
+            do {
+                let existingProducts = try context.fetch(fetchRequest)
+                
+                if existingProducts.isEmpty {
+                    let productEntity = ProductEntity(context: context)
+                    productEntity.id = product.id
+                    productEntity.name = product.name
+                    productEntity.price = product.price
+                    productEntity.stock = Int16(product.stock)
+                    productEntity.imageUrl = product.imageUrl
+                    productEntity.location = product.location
+                } else {
+                    print("Producto ya en Core Data: \(product.name)")
+                }
+            } catch {
+                print("Error al verificar si existe: \(error)")
+            }
         }
+        
+        CoreDataManager.shared.saveContext()
     }
     
     func loadProductsFromCoreData() -> [Product] {

@@ -88,4 +88,9 @@ class ProductTableViewCell: UITableViewCell {
             productImageView.loadImage(from: imageUrl)
         }
     }
+    func resetContent() {
+        nameLabel.text = nil
+        priceLabel.text = nil
+        productImageView.image = nil
+    }
 }

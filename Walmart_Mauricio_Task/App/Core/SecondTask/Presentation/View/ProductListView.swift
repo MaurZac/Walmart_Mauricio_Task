@@ -57,12 +57,14 @@ final class ProductListViewController: UIViewController {
     private func setupBindings() {
         viewModel.$products
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
+            .sink { [weak self] products in
                 self?.tableView.reloadData()
-                guard let activityIndicator = self?.activityIndicator else {
-                    return
+                
+                if !products.isEmpty {
+                    self?.tableView.reloadData()
                 }
-                activityIndicator.stopAnimating()
+                
+                self?.activityIndicator?.stopAnimating()
             }
             .store(in: &cancellables)
         
@@ -107,6 +109,8 @@ extension ProductListViewController: UITableViewDataSource, UITableViewDelegate 
         let cell = tableView.dequeueReusableCell(withIdentifier: "ProductTableViewCell", for: indexPath) as! ProductTableViewCell
         let product = viewModel.getProduct(at: indexPath.row)
         cell.selectionStyle = .none
+        cell.resetContent()
+        cell.imageView?.image = nil
         cell.configure(with: product)
         return cell
     }
